@@ -1,0 +1,152 @@
+# NZB Services
+version: "3.8"
+services:
+
+  sabnzbd:
+    image: linuxserver/sabnzbd
+    container_name: sabnzbd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/sabnzbd:/config
+      - ${USERDIR}/docker/shared:/downloads
+      - ${USERDIR}/docker/shared:/shared
+    ports:
+      - 8080:8080
+      - 9090:9090
+    restart: unless-stopped
+
+  nzbhydra2:
+    image: linuxserver/nzbhydra2
+    container_name: nzbhydra2
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/nzbhydra2:/config
+      - ${USERDIR}/docker/shared:/downloads
+    ports:
+      - 5076:5076
+    restart: unless-stopped
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/sonarr:/config
+      - ${USERDIR}/docker/shared:/tv
+      - ${USERDIR}/docker/shared:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/radarr:/config
+      - ${USERDIR}/docker/shared:/movies
+      - ${USERDIR}/docker/shared:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  mylar:
+    image: linuxserver/mylar
+    container_name: mylar
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/mylar:/config
+      - ${USERDIR}/docker/shared:/comics
+      - ${USERDIR}/docker/shared:/downloads
+    ports:
+      - 8090:8090
+    restart: unless-stopped
+
+  lazylibrarian:
+    image: linuxserver/lazylibrarian
+    container_name: lazylibrarian
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ${USERDIR}/docker/lazylibrarian:/config
+      - ${USERDIR}/docker/shared:/downloads
+      - ${USERDIR}/docker/shared:/books
+    ports:
+      - 5299:5299
+    restart: unless-stopped
+
+  calibre-web:
+    image: linuxserver/calibre-web
+    container_name: calibre-web
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ${USERDIR}/docker/calibre-web:/config
+      - ${USERDIR}/docker/shared/Media/Books:/books
+    ports:
+      - 8083:8083
+    restart: unless-stopped
+
+  lidarr:
+    image: linuxserver/lidarr
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/lidarr:/config
+      - ${USERDIR}/docker/shared:/music
+      - ${USERDIR}/docker/shared:/downloads
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+
+  ombi:
+    image: linuxserver/ombi
+    container_name: ombi
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - BASE_URL=/ombi #optional
+    volumes:
+      - ${USERDIR}/docker/ombi:/config
+    ports:
+      - 3579:3579
+    restart: unless-stopped
+
+  heimdall:
+    image: linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${USERDIR}/docker/heimdall:/config
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
