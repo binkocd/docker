@@ -6,6 +6,7 @@
 
 ## Install & Usage
 
+```
 Update Packages
 Install zsh and nfs
 sudo apt install zsh nfs-common
@@ -32,6 +33,7 @@ https://portainer.readthedocs.io/en/latest/deployment.html
 deploy nzb stack
 docker-compose -f nzb.yml -p nzb up -d
 Configure SABNZBD
+```
 
 ## Author
 
