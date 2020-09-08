@@ -1,4 +1,10 @@
-Instructions (WIP)
+<h1 align="center">Welcome to Josh's Personal Docker Project(s) 👋</h1>
+<p>
+</p>
+
+> A collection of Docker related scripts, configs, how-to's, and whatever else comes up along the way. 
+
+## Install & Usage
 
 Update Packages
 Install zsh and nfs
@@ -18,14 +24,18 @@ verify shared directory permissions
 change timezone
 set env variables
 export TZ="America/Los_Angeles"
-export USERDIR="/home/binkocd"
+export USERDIR="/home/$USER"
 export PUID="1000"
 export PGID="1000"
 deploy portainer
 https://portainer.readthedocs.io/en/latest/deployment.html
-copy over nzb.yml
 deploy nzb stack
 docker-compose -f nzb.yml -p nzb up -d
-clone nzbtomeda to sab config folder (look for different location?)
-https://github.com/clinton-hall/nzbToMedia
 Configure SABNZBD
+
+## Author
+
+👤 **binkocd**
+
+* Github: [@binkocd](https://github.com/binkocd)
+* LinkedIn: [@joshuarobertbailey](https://linkedin.com/in/joshuarobertbailey)
