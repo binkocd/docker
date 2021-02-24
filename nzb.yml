@@ -6,13 +6,13 @@ services:
     image: linuxserver/sabnzbd
     container_name: sabnzbd
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/sabnzbd:/config
-      - ${USERDIR}/docker/shared:/downloads
-      - ${USERDIR}/docker/shared:/shared
+      - /home/binkocd/docker/sabnzbd:/config
+      - /home/binkocd/docker/shared:/downloads
+      - /home/binkocd/docker/shared:/shared
     ports:
       - 8080:8080
       - 9090:9090
@@ -22,12 +22,12 @@ services:
     image: linuxserver/nzbhydra2
     container_name: nzbhydra2
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/nzbhydra2:/config
-      - ${USERDIR}/docker/shared:/downloads
+      - /home/binkocd/docker/nzbhydra2:/config
+      - /home/binkocd/docker/shared:/downloads
     ports:
       - 5076:5076
     restart: unless-stopped
@@ -36,13 +36,13 @@ services:
     image: linuxserver/sonarr
     container_name: sonarr
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/sonarr:/config
-      - ${USERDIR}/docker/shared:/tv
-      - ${USERDIR}/docker/shared:/downloads
+      - /home/binkocd/docker/sonarr:/config
+      - /home/binkocd/docker/shared:/tv
+      - /home/binkocd/docker/shared:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -51,28 +51,28 @@ services:
     image: linuxserver/radarr
     container_name: radarr
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/radarr:/config
-      - ${USERDIR}/docker/shared:/movies
-      - ${USERDIR}/docker/shared:/downloads
+      - /home/binkocd/docker/radarr:/config
+      - /home/binkocd/docker/shared:/movies
+      - /home/binkocd/docker/shared:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
 
   mylar:
-    image: linuxserver/mylar
-    container_name: mylar
+    image: linuxserver/mylar3
+    container_name: mylar3
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/mylar:/config
-      - ${USERDIR}/docker/shared:/comics
-      - ${USERDIR}/docker/shared:/downloads
+      - /home/binkocd/docker/mylar:/config
+      - /home/binkocd/docker/shared:/comics
+      - /home/binkocd/docker/shared:/downloads
     ports:
       - 8090:8090
     restart: unless-stopped
@@ -81,14 +81,14 @@ services:
     image: linuxserver/lazylibrarian
     container_name: lazylibrarian
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
       - DOCKER_MODS=linuxserver/calibre-web:calibre
     volumes:
-      - ${USERDIR}/docker/lazylibrarian:/config
-      - ${USERDIR}/docker/shared:/downloads
-      - ${USERDIR}/docker/shared:/books
+      - /home/binkocd/docker/lazylibrarian:/config
+      - /home/binkocd/docker/shared:/downloads
+      - /home/binkocd/docker/shared:/books
     ports:
       - 5299:5299
     restart: unless-stopped
@@ -97,13 +97,13 @@ services:
     image: linuxserver/calibre-web
     container_name: calibre-web
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
       - DOCKER_MODS=linuxserver/calibre-web:calibre
     volumes:
-      - ${USERDIR}/docker/calibre-web:/config
-      - ${USERDIR}/docker/shared/Media/Books:/books
+      - /home/binkocd/docker/calibre-web:/config
+      - /home/binkocd/docker/shared/Media/Books:/books
     ports:
       - 8083:8083
     restart: unless-stopped
@@ -112,13 +112,13 @@ services:
     image: linuxserver/lidarr
     container_name: lidarr
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/lidarr:/config
-      - ${USERDIR}/docker/shared:/music
-      - ${USERDIR}/docker/shared:/downloads
+      - /home/binkocd/docker/lidarr:/config
+      - /home/binkocd/docker/shared:/music
+      - /home/binkocd/docker/shared:/downloads
     ports:
       - 8686:8686
     restart: unless-stopped
@@ -127,12 +127,12 @@ services:
     image: linuxserver/ombi
     container_name: ombi
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
       - BASE_URL=/ombi #optional
     volumes:
-      - ${USERDIR}/docker/ombi:/config
+      - /home/binkocd/docker/ombi:/config
     ports:
       - 3579:3579
     restart: unless-stopped
@@ -141,12 +141,30 @@ services:
     image: linuxserver/heimdall
     container_name: heimdall
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
     volumes:
-      - ${USERDIR}/docker/heimdall:/config
+      - /home/binkocd/docker/heimdall:/config
     ports:
       - 80:80
       - 443:443
+    restart: unless-stopped
+
+  calibre:
+    image: linuxserver/calibre
+    container_name: calibre
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      #- GUAC_USER=abc #optional
+      #- GUAC_PASS=900150983cd24fb0d6963f7d28e17f72 #optional
+      #- UMASK_SET=022 #optional
+      #- CLI_ARGS= #optional
+    volumes:
+      - /home/binkocd/docker/calibre:/config
+    ports:
+      - 8082:8080
+      - 8081:8081
     restart: unless-stopped

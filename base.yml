@@ -2,6 +2,10 @@
 version: "3.3"
 services:
 
+  # Base Services
+version: "3.3"
+services:
+
   portainer:
     image: portainer/portainer
     container_name: portainer
@@ -11,17 +15,16 @@ services:
       - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${USERDIR}/docker/portainer/data:/data
-      - ${USERDIR}/docker/shared:/shared
+      - /home/binkocd/docker/portainer/data:/data
+      - /home/binkocd/docker/shared:/shared
     environment:
-      - TZ=${TZ}
+      - TZ=America/Los_Angeles
+
 
   watchtower:
     container_name: watchtower
     restart: always
-    image: v2tec/watchtower
+    image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --schedule "0 0 4 * * *" --cleanup
-
-  
+    command: --interval 30

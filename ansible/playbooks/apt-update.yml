@@ -1,0 +1,9 @@
+# apt-update.yml
+
+---
+    - hosts: docker_hosts
+      become: true
+      tasks:
+        - name: Updating apt packages
+          apt: update_cache=yes
+          apt: name=* state=latest
