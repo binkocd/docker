@@ -1,13 +1,8 @@
 # Base Services
-version: "3.3"
-services:
-
-  # Base Services
-version: "3.3"
 services:
 
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer-ce:latest
     container_name: portainer
     restart: always
     command: -H unix:///var/run/docker.sock
@@ -19,7 +14,6 @@ services:
       - /home/binkocd/docker/shared:/shared
     environment:
       - TZ=America/Los_Angeles
-
 
   watchtower:
     container_name: watchtower

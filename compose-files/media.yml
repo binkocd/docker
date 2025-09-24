@@ -1,0 +1,75 @@
+# This Docker Compose file contains the following services:
+# - plex: A media server.
+# - tautulli: A Plex monitoring and statistics tool.
+# - ombi: A service to allow users to request media.
+# This file uses the following environment variables, which should be defined in a .env file:
+# - CONFIG_DIR: The path for all service configurations.
+# - DATA_DIR: The path for your media files.
+# - PUID: The user ID to run the container as.
+# - PGID: The group ID to run the container as.
+# - TZ: The timezone for the containers.
+
+# Define common environment variables using an extension field.
+x-common-env: &common-env
+  PUID: ${PUID}
+  PGID: ${PGID}
+  TZ: ${TZ}
+
+services:
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      <<: *common-env
+      - VERSION=docker
+    volumes:
+      - ${CONFIG_DIR}/plexms:/config
+      - ${DATA_DIR}:/tv
+      - ${DATA_DIR}:/movies
+    ports:
+      - "32400:32400/tcp"
+      - "3005:3005/tcp"
+      - "8324:8324/tcp"
+      - "32469:32469/tcp"
+      - "1900:1900/udp"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+    restart: unless-stopped
+
+  tautulli:
+    container_name: tautulli
+    restart: always
+    image: linuxserver/tautulli
+    volumes:
+      - ${CONFIG_DIR}/tautulli/config:/config
+      - ${CONFIG_DIR}/tautulli/logs:/logs:ro
+      - ${CONFIG_DIR}/shared:/shared
+    ports:
+      - "8181:8181"
+    environment:
+      <<: *common-env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8181"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ombi:
+    image: lscr.io/linuxserver/ombi:latest
+    container_name: ombi
+    environment:
+      <<: *common-env
+      - BASE_URL=/ #optional
+    volumes:
+      - ${CONFIG_DIR}/ombi/config:/config
+    ports:
+      - 3579:3579
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3579"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

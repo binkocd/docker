@@ -1,0 +1,47 @@
+# This Docker Compose file has been updated to use variables defined
+# in a separate .env file to centralize all common paths.
+#
+# - portainer: A container management tool.
+# - watchtower: A service to automatically update other containers.
+#
+# This file uses the following environment variables, which should be defined in a .env file:
+# - CONFIG_DIR: The path for all service configurations.
+# - DATA_DIR: The path for your media files.
+# - PUID: The user ID to run the container as.
+# - PGID: The group ID to run the container as.
+# - TZ: The timezone for the containers.
+#
+
+# Define common environment variables using an extension field.
+x-common-env: &common-env
+  PUID: ${PUID}
+  PGID: ${PGID}
+  TZ: ${TZ}
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${CONFIG_DIR}/portainer/data:/data
+      - ${CONFIG_DIR}/shared:/shared
+    environment:
+      <<: *common-env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  watchtower:
+    container_name: watchtower
+    restart: always
+    image: containrrr/watchtower:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 --cleanup

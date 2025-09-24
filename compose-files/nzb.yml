@@ -1,0 +1,200 @@
+# This Docker Compose file has been updated to use variables defined
+# in a separate .env file to centralize all common paths.
+#
+# Services included in this file:
+# - sabnzbd: A binary downloader for usenet.
+# - sonarr: Manages and downloads TV show releases.
+# - radarr: Manages and downloads movie releases.
+# - mylar: Manages and downloads comic book releases.
+# - lazylibrarian: Manages and downloads audiobooks and e-books.
+# - lidarr: Manages and downloads music releases.
+# - prowlarr: Indexer manager for Torznab and Usenet.
+#
+# This file uses the following environment variables, which should be defined in a .env file:
+# - CONFIG_DIR: The path for all service configurations.
+# - DATA_DIR: The path for your media files.
+# - PUID: The user ID to run the container as.
+# - PGID: The group ID to run the container as.
+# - TZ: The timezone for the containers.
+#
+
+# Define common volumes using an extension field.
+x-downloads-volume: &downloads-volume
+  - ${DATA_DIR}:/downloads
+
+# Define common environment variables using an extension field.
+x-common-env: &common-env
+  PUID: ${PUID}
+  PGID: ${PGID}
+  TZ: ${TZ}
+
+services:
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      <<: *common-env
+    volumes:
+      - ${CONFIG_DIR}/sabnzbd:/config
+      <<: *downloads-volume
+      - ${DATA_DIR}:/shared # Keep this as it seems specific
+    ports:
+      - 8080:8080
+      - 9090:9090
+    restart: unless-stopped
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      <<: *common-env
+    volumes:
+      - ${CONFIG_DIR}/sonarr:/config
+      - ${DATA_DIR}:/tv
+      <<: *downloads-volume
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+    depends_on:
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8989/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      <<: *common-env
+    volumes:
+      - ${CONFIG_DIR}/radarr:/config
+      - ${DATA_DIR}:/movies
+      <<: *downloads-volume
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+    depends_on:
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7878/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mylar:
+    image: lscr.io/linuxserver/mylar3:latest
+    container_name: mylar3
+    environment:
+      <<: *common-env
+    volumes:
+      - ${CONFIG_DIR}/mylar:/config
+      - ${DATA_DIR}:/comics
+      <<: *downloads-volume
+    ports:
+      - 8090:8090
+    restart: unless-stopped
+    depends_on:
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8090/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: lazylibrarian
+    environment:
+      <<: *common-env
+      DOCKER_MODS: linuxserver/calibre-web:calibre
+    volumes:
+      - ${CONFIG_DIR}/lazylibrarian:/config
+      <<: *downloads-volume
+      - ${DATA_DIR}:/books
+    ports:
+      - 5299:5299
+    restart: unless-stopped
+    depends_on:
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5299/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      <<: *common-env
+    volumes:
+      - ${CONFIG_DIR}/lidarr:/config
+      - ${DATA_DIR}:/music
+      <<: *downloads-volume
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+    depends_on:
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8686/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      <<: *common-env
+    volumes:
+      - ${CONFIG_DIR}/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+    networks:
+      - nzb-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9696/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  nzb-network:
+    name: nzb-network
+    driver: bridge
