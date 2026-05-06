@@ -1,0 +1,52 @@
+# This Docker Compose file contains the following services:
+# - vikunja: The task manager you actually own.
+# This file uses the following environment variables, which should be defined in a .env file:
+# - CONFIG_DIR: The path for all service configurations.
+# - DATA_DIR: The path for your media files.
+# - PUID: The user ID to run the container as.
+# - PGID: The group ID to run the container as.
+# - TZ: The timezone for the containers.
+
+# Define common environment variables using an extension field.
+x-common-env: &common-env
+  PUID: ${PUID}
+  PGID: ${PGID}
+  TZ: ${TZ}
+
+services:
+  db-vikunja:
+    image: mariadb:10
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      <<: *common-env
+      MARIADB_RANDOM_ROOT_PASSWORD: 1
+      MARIADB_USER: vikunja
+      MARIADB_PASSWORD: ${DB_PASS}
+      MARIADB_DATABASE: vikunja
+    volumes:
+      - ${CONFIG_DIR}/vikunja-db:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  vikunja:
+    image: vikunja/vikunja
+    environment:
+      <<: *common-env
+      VIKUNJA_DATABASE_HOST: db-vikunja
+      VIKUNJA_DATABASE_PASSWORD: ${DB_PASS}
+      VIKUNJA_DATABASE_TYPE: mysql
+      VIKUNJA_DATABASE_USER: vikunja
+      VIKUNJA_DATABASE_NAME: vikunja
+      VIKUNJA_SERVICE_PUBLICURL: http://localhost:3456
+    ports:
+      - 3456:3456
+    volumes:
+      - ${CONFIG_DIR}/vikunja:/app/vikunja/files
+    depends_on:
+      - db-vikunja
+    restart: always

@@ -22,7 +22,6 @@ services:
     network_mode: host
     environment:
       <<: *common-env
-      - VERSION=docker
     volumes:
       - ${CONFIG_DIR}/plexms:/config
       - ${DATA_DIR}:/tv
@@ -62,7 +61,6 @@ services:
     container_name: ombi
     environment:
       <<: *common-env
-      - BASE_URL=/ #optional
     volumes:
       - ${CONFIG_DIR}/ombi/config:/config
     ports:
@@ -70,6 +68,42 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3579"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    environment:
+      <<: *common-env
+    ports:
+      - 13378:80
+    volumes:
+      - ${DATA_DIR}:/audiobooks
+      - ${DATA_DIR}:/podcasts
+      - ${CONFIG_DIR}/audiobookshelf/config:/config
+      - ${CONFIG_DIR}/audiobookshelf/metadata:/metadata
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:13378"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  beets:
+    image: lscr.io/linuxserver/beets:latest
+    container_name: beets
+    environment:
+      <<: *common-env
+    ports:
+      - 8337:8337
+    volumes:
+      - ${CONFIG_DIR}/beets:/config
+      - ${DATA_DIR}:/music
+      - ${DATA_DIR}:/downloads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8337"]
       interval: 30s
       timeout: 10s
       retries: 3

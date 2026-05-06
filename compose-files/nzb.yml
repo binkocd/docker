@@ -16,11 +16,6 @@
 # - PUID: The user ID to run the container as.
 # - PGID: The group ID to run the container as.
 # - TZ: The timezone for the containers.
-#
-
-# Define common volumes using an extension field.
-x-downloads-volume: &downloads-volume
-  - ${DATA_DIR}:/downloads
 
 # Define common environment variables using an extension field.
 x-common-env: &common-env
@@ -36,7 +31,7 @@ services:
       <<: *common-env
     volumes:
       - ${CONFIG_DIR}/sabnzbd:/config
-      <<: *downloads-volume
+      - ${DATA_DIR}:/downloads
       - ${DATA_DIR}:/shared # Keep this as it seems specific
     ports:
       - 8080:8080
@@ -58,7 +53,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/sonarr:/config
       - ${DATA_DIR}:/tv
-      <<: *downloads-volume
+      - ${DATA_DIR}:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -83,7 +78,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/radarr:/config
       - ${DATA_DIR}:/movies
-      <<: *downloads-volume
+      - ${DATA_DIR}:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -108,7 +103,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/mylar:/config
       - ${DATA_DIR}:/comics
-      <<: *downloads-volume
+      - ${DATA_DIR}:/downloads
     ports:
       - 8090:8090
     restart: unless-stopped
@@ -133,7 +128,7 @@ services:
       DOCKER_MODS: linuxserver/calibre-web:calibre
     volumes:
       - ${CONFIG_DIR}/lazylibrarian:/config
-      <<: *downloads-volume
+      - ${DATA_DIR}:/downloads
       - ${DATA_DIR}:/books
     ports:
       - 5299:5299
@@ -159,7 +154,7 @@ services:
     volumes:
       - ${CONFIG_DIR}/lidarr:/config
       - ${DATA_DIR}:/music
-      <<: *downloads-volume
+      - ${DATA_DIR}:/downloads
     ports:
       - 8686:8686
     restart: unless-stopped

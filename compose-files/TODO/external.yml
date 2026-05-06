@@ -1,0 +1,15 @@
+---
+# External Services
+version: "3.8"
+services:
+
+  ddclient:
+    image: linuxserver/ddclient:latest
+    container_name: ddclient
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /share/homes/binkocd/docker/ddclient:/config
+    restart: always

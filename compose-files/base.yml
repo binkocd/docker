@@ -33,7 +33,7 @@ services:
     environment:
       <<: *common-env
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9000/"]
+      test: ["CMD-SHELL", "curl -f -L -I https://localhost:9000/"]
       interval: 30s
       timeout: 10s
       retries: 3
